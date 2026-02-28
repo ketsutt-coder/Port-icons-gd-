@@ -12,6 +12,7 @@
             --text-main: #FFFFFF;
             --text-muted: rgba(255, 255, 255, 0.7);
         }
+
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; 
             text-align: center; 
@@ -24,6 +25,7 @@
             background: #121212;
             color: var(--text-main); 
         }
+
         .glass-card {
             background: #1c1c1e;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -34,6 +36,7 @@
             max-width: 450px;
             box-sizing: border-box;
         }
+
         .profile-container {
             margin-bottom: 25px;
             display: flex;
@@ -41,6 +44,7 @@
             align-items: center;
             position: relative;
         }
+        
         .marco-ketsu {
             position: absolute;
             width: 140px; 
@@ -49,6 +53,7 @@
             pointer-events: none;
             z-index: 10;
         }
+
         .profile-pic {
             width: 90px;
             height: 90px;
@@ -62,6 +67,7 @@
             justify-content: center;
             overflow: hidden;
         }
+        
         .profile-pic img {
             width: 100%;
             height: 100%;
@@ -70,6 +76,7 @@
             background: #1c1c1e;
             display: block; 
         }
+
         h1.welcome-text {
             margin: 0;
             font-weight: 800;
@@ -78,7 +85,9 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
         .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 25px; font-weight: 500;}
+        
         #dropzone {
             background: #2c2c2e;
             padding: 40px 20px;
@@ -88,9 +97,11 @@
             border: 2px dashed #4a4a4c;
         }
         #dropzone:active { transform: scale(0.96); background: #3a3a3c; }
+        
         .drop-icon { font-size: 45px; margin-bottom: 15px; display: block; }
         .drop-text-main { font-weight: 600; font-size: 18px; margin: 0; }
         .drop-text-sub { color: var(--text-muted); font-size: 14px; margin-top: 8px; }
+
         .btn { 
             background: var(--apple-blue); 
             color: #ffffff; 
@@ -106,15 +117,18 @@
             box-sizing: border-box;
         }
         .btn:active { transform: scale(0.96); opacity: 0.9; }
+
         #status-container { margin-top: 25px; min-height: 40px; }
         #status-text { font-size: 16px; font-weight: 600; margin-bottom: 5px; }
         #progress-detail { font-size: 13px; color: var(--text-muted); word-break: break-all; }
+        
         #fileInput { display: none; }
         #downloadArea { margin-top: 10px; }
         #error-log { color: #ff453a; font-size: 12px; margin-top: 10px; text-align: left; }
     </style>
 </head>
 <body>
+
     <div class="glass-card">
         <div class="profile-container">
             <img class="marco-ketsu" src="marco.gif" alt="Marco" onerror="this.style.display='none'">
@@ -124,12 +138,12 @@
             <h1 class="welcome-text">Ketsu te da la bienvenida</h1>
         </div>
 
-        <p class="subtitle">Motor V20: El Recorte Exacto (Fix Tijeras)</p>
+        <p class="subtitle">Motor V11: Split & Repack GD Colon</p>
         
         <div id="dropzone">
-            <span class="drop-icon">✂️</span>
+            <span class="drop-icon">🧩</span>
             <h3 class="drop-text-main">Toca para subir archivos</h3>
-            <p class="drop-text-sub">El método puro que pediste, sin fallos.</p>
+            <p class="drop-text-sub">Desplistea y re-empaqueta sin errores</p>
         </div>
         
         <input type="file" id="fileInput" multiple>
@@ -152,35 +166,14 @@
         const errorLog = document.getElementById('error-log');
 
         dropzone.addEventListener('click', () => fileInput.click());
+
         fileInput.addEventListener('change', (e) => {
             if(e.target.files.length > 0) procesarArchivos(e.target.files);
         });
 
-        const pausaUI = () => new Promise(resolve => setTimeout(resolve, 5));
+        const pausaUI = () => new Promise(resolve => setTimeout(resolve, 15));
 
-        function getDictNode(dictNode, keyName) {
-            for(let i = 0; i < dictNode.children.length; i += 2) {
-                if(dictNode.children[i].textContent === keyName) return dictNode.children[i+1];
-            }
-            return null;
-        }
-
-        function setDictNodeText(dictNode, keyName, newValue) {
-            for(let i = 0; i < dictNode.children.length; i += 2) {
-                if(dictNode.children[i].textContent === keyName) {
-                    dictNode.children[i+1].textContent = newValue;
-                    return;
-                }
-            }
-        }
-
-        function dividirStringMitad(str) {
-            return str.replace(/-?[\d.]+/g, match => {
-                let num = parseFloat(match) / 2;
-                return Number.isInteger(num) ? num : parseFloat(num.toFixed(2));
-            });
-        }
-
+        // 🔥 MOTOR V11: SPLIT EXACTO TIPO GD COLON 🔥
         function procesarIconoGDColon(imagenBlob, plistTexto) {
             return new Promise((resolve, reject) => {
                 const img = new Image();
@@ -189,96 +182,98 @@
                         const parser = new DOMParser();
                         const xmlDoc = parser.parseFromString(plistTexto, "text/xml");
                         const topDict = xmlDoc.querySelector("plist > dict");
-                        let framesDict = getDictNode(topDict, "frames");
-                        let metadataDict = getDictNode(topDict, "metadata");
+                        let framesDict = null;
+                        let metadataDict = null;
 
-                        let format = 3; 
-                        if(metadataDict) {
-                            let fVal = getDictNode(metadataDict, "format");
-                            if(fVal) format = parseInt(fVal.textContent);
+                        for(let i = 0; i < topDict.children.length; i++) {
+                            if(topDict.children[i].tagName === "key" && topDict.children[i].textContent === "frames") framesDict = topDict.children[i+1];
+                            if(topDict.children[i].tagName === "key" && topDict.children[i].textContent === "metadata") metadataDict = topDict.children[i+1];
                         }
 
                         let piezasExtraidas = [];
 
-                        // 1. DESPLISTEAR: LEER Y EXTRAER CON LAS MEDIDAS REALES
+                        // 1. DESPLISTEAR: Cortar cada imagen por separado
                         for(let i = 0; i < framesDict.children.length; i += 2) {
                             let nameKey = framesDict.children[i];
                             let frameData = framesDict.children[i+1];
                             if(nameKey.tagName !== "key" || frameData.tagName !== "dict") continue;
 
-                            let pieza = { name: nameKey.textContent, dictNode: frameData };
+                            let pieza = { name: nameKey.textContent, isRotated: false };
 
-                            let rectNode = getDictNode(frameData, "textureRect") || getDictNode(frameData, "frame");
-                            let rotatedNode = getDictNode(frameData, "textureRotated") || getDictNode(frameData, "rotated");
-                            pieza.isRotated = rotatedNode ? (rotatedNode.tagName === "true") : false;
+                            for(let j = 0; j < frameData.children.length; j += 2) {
+                                let pKey = frameData.children[j].textContent;
+                                let pVal = frameData.children[j+1];
 
-                            if (rectNode) {
-                                let coords = rectNode.textContent.match(/-?[\d.]+/g).map(Number);
-                                pieza.xOrig = coords[0]; 
-                                pieza.yOrig = coords[1];
-                                pieza.rectNode = rectNode;
-
-                                // EL FIX PRINCIPAL: Leer bien qué es Físico y qué es Lógico según el Formato
-                                if (format === 3) {
-                                    pieza.logicalW = coords[2];
-                                    pieza.logicalH = coords[3];
-                                    pieza.physW = pieza.isRotated ? coords[3] : coords[2];
-                                    pieza.physH = pieza.isRotated ? coords[2] : coords[3];
-                                } else {
-                                    pieza.physW = coords[2];
-                                    pieza.physH = coords[3];
-                                    pieza.logicalW = pieza.isRotated ? coords[3] : coords[2];
-                                    pieza.logicalH = pieza.isRotated ? coords[2] : coords[3];
+                                if(pKey === "textureRect" || pKey === "frame") {
+                                    let coords = pVal.textContent.match(/-?[\d.]+/g).map(Number);
+                                    pieza.xOrig = coords[0]; pieza.yOrig = coords[1];
+                                    pieza.wLogico = coords[2]; pieza.hLogico = coords[3]; 
+                                    pieza.rectNode = pVal;
+                                } else if (pKey === "textureRotated" || pKey === "rotated") {
+                                    pieza.isRotated = (pVal.tagName === "true");
+                                } else if (pKey === "spriteOffset" || pKey === "offset") {
+                                    pieza.offsetNode = pVal;
+                                } else if (pKey === "spriteSize") {
+                                    pieza.sizeNode = pVal;
+                                } else if (pKey === "spriteSourceSize" || pKey === "sourceSize") {
+                                    pieza.sourceSizeNode = pVal;
+                                } else if (pKey === "sourceColorRect") {
+                                    pieza.sourceColorRectNode = pVal;
                                 }
-
-                                // Encoger todo a la mitad exacta
-                                pieza.newPhysW = pieza.physW / 2;
-                                pieza.newPhysH = pieza.physH / 2;
-                                pieza.newLogicalW = pieza.logicalW / 2;
-                                pieza.newLogicalH = pieza.logicalH / 2;
-
-                                if (pieza.physW > 0 && pieza.physH > 0) {
-                                    // Aislar la pieza EXACTA en un canvas miniatura
-                                    const physCanvas = document.createElement('canvas');
-                                    physCanvas.width = Math.ceil(pieza.physW);
-                                    physCanvas.height = Math.ceil(pieza.physH);
-                                    physCanvas.getContext('2d').drawImage(img, pieza.xOrig, pieza.yOrig, pieza.physW, pieza.physH, 0, 0, pieza.physW, pieza.physH);
-
-                                    // Crear el canvas encogido
-                                    const canvasMitad = document.createElement('canvas');
-                                    canvasMitad.width = Math.max(1, Math.ceil(pieza.newPhysW));
-                                    canvasMitad.height = Math.max(1, Math.ceil(pieza.newPhysH));
-                                    const ctxMitad = canvasMitad.getContext('2d');
-                                    ctxMitad.imageSmoothingEnabled = true;
-                                    ctxMitad.imageSmoothingQuality = 'high';
-                                    ctxMitad.drawImage(physCanvas, 0, 0, pieza.physW, pieza.physH, 0, 0, pieza.newPhysW, pieza.newPhysH);
-
-                                    pieza.imagenLista = canvasMitad;
-                                }
-                                piezasExtraidas.push(pieza);
                             }
-                        }
-                        await pausaUI();
 
-                        // 2. RE-EMPAQUETAR
-                        piezasExtraidas.sort((a, b) => b.newPhysH - a.newPhysH);
-                        let padding = 2; 
+                            pieza.wFisico = pieza.isRotated ? pieza.hLogico : pieza.wLogico;
+                            pieza.hFisico = pieza.isRotated ? pieza.wLogico : pieza.hLogico;
+                            piezasExtraidas.push(pieza);
+                        }
+
+                        // 2. REDIMENSIONAR DE UNA POR UNA (Como tus imágenes sueltas)
+                        for(let pieza of piezasExtraidas) {
+                            if(pieza.wFisico > 0 && pieza.hFisico > 0) {
+                                const canvasOriginal = document.createElement('canvas');
+                                canvasOriginal.width = Math.ceil(pieza.wFisico);
+                                canvasOriginal.height = Math.ceil(pieza.hFisico);
+                                const ctxOrig = canvasOriginal.getContext('2d');
+                                ctxOrig.drawImage(img, pieza.xOrig, pieza.yOrig, pieza.wFisico, pieza.hFisico, 0, 0, pieza.wFisico, pieza.hFisico);
+
+                                // Usamos Math.ceil para no cortar pixeles difuminados en medidas impares
+                                pieza.wFisicoMitad = Math.ceil(pieza.wFisico / 2);
+                                pieza.hFisicoMitad = Math.ceil(pieza.hFisico / 2);
+                                
+                                const canvasMitad = document.createElement('canvas');
+                                canvasMitad.width = pieza.wFisicoMitad;
+                                canvasMitad.height = pieza.hFisicoMitad;
+                                const ctxMitad = canvasMitad.getContext('2d');
+                                ctxMitad.imageSmoothingEnabled = true;
+                                ctxMitad.imageSmoothingQuality = 'high';
+                                
+                                ctxMitad.drawImage(canvasOriginal, 0, 0, pieza.wFisico, pieza.hFisico, 0, 0, pieza.wFisicoMitad, pieza.hFisicoMitad);
+                                
+                                pieza.imagenLista = canvasMitad; 
+                            } else {
+                                pieza.wFisicoMitad = 0;
+                                pieza.hFisicoMitad = 0;
+                            }
+                            await pausaUI();
+                        }
+
+                        // 3. VOLVER A JUNTAR (El re-empaquetado)
+                        piezasExtraidas.sort((a, b) => b.hFisicoMitad - a.hFisicoMitad);
+                        let padding = 2; // Margen para evitar líneas
                         let posX = padding, posY = padding, alturaFila = 0, maxAncho = 0;
 
                         piezasExtraidas.forEach(p => {
-                            if (p.newPhysW > 0) {
-                                if (posX + p.newPhysW + padding > 1024) { 
-                                    posX = padding;
-                                    posY += alturaFila + padding;
-                                    alturaFila = 0;
-                                }
-                                p.nuevoX = posX;
-                                p.nuevoY = posY;
-                                
-                                posX += p.newPhysW + padding;
-                                if (p.newPhysH > alturaFila) alturaFila = p.newPhysH;
-                                if (posX > maxAncho) maxAncho = posX;
+                            if (posX + p.wFisicoMitad + padding > 1024) { 
+                                posX = padding;
+                                posY += alturaFila + padding;
+                                alturaFila = 0;
                             }
+                            p.nuevoX = posX;
+                            p.nuevoY = posY;
+                            
+                            posX += p.wFisicoMitad + padding;
+                            if (p.hFisicoMitad > alturaFila) alturaFila = p.hFisicoMitad;
+                            if (posX > maxAncho) maxAncho = posX;
                         });
 
                         let anchoHojaFinal = Math.pow(2, Math.ceil(Math.log2(Math.max(2, maxAncho))));
@@ -289,45 +284,47 @@
                         canvasFinal.height = altoHojaFinal;
                         const ctxFinal = canvasFinal.getContext('2d');
 
-                        // 3. REPLISTEAR: DIVIDIR TODOS LOS TAMAÑOS Y OFFSETS A LA MITAD
-                        piezasExtraidas.forEach(p => {
-                            if(p.imagenLista) {
-                                ctxFinal.drawImage(p.imagenLista, p.nuevoX, p.nuevoY);
-
-                                let nx = Number.isInteger(p.nuevoX) ? p.nuevoX : parseFloat(p.nuevoX.toFixed(2));
-                                let ny = Number.isInteger(p.nuevoY) ? p.nuevoY : parseFloat(p.nuevoY.toFixed(2));
-                                
-                                let nw, nh;
-                                if (format === 3) {
-                                    nw = Number.isInteger(p.newLogicalW) ? p.newLogicalW : parseFloat(p.newLogicalW.toFixed(2));
-                                    nh = Number.isInteger(p.newLogicalH) ? p.newLogicalH : parseFloat(p.newLogicalH.toFixed(2));
-                                } else {
-                                    nw = Number.isInteger(p.newPhysW) ? p.newPhysW : parseFloat(p.newPhysW.toFixed(2));
-                                    nh = Number.isInteger(p.newPhysH) ? p.newPhysH : parseFloat(p.newPhysH.toFixed(2));
-                                }
-                                
-                                p.rectNode.textContent = `{{${nx},${ny}},{${nw},${nh}}}`;
-                            }
-
-                            // Divide absolutamente todos los otros atributos a la mitad (No tocamos la rotación)
-                            let keysAEncoger = ["spriteOffset", "offset", "spriteSize", "spriteSourceSize", "sourceSize", "sourceColorRect"];
-                            keysAEncoger.forEach(llave => {
-                                let nodo = getDictNode(p.dictNode, llave);
-                                if (nodo) {
-                                    nodo.textContent = dividirStringMitad(nodo.textContent);
-                                }
-                            });
+                        // Ajuste matemático calcado de la fórmula oficial
+                        const reducirStr = (str) => str.replace(/(-?[\d.]+)/g, m => {
+                            let n = parseFloat(m) / 2;
+                            // Redondeamos para imitar la precisión de GD
+                            n = Math.round(n * 100) / 100;
+                            return Number.isInteger(n) ? n : n;
                         });
 
-                        // 4. ACTUALIZAR METADATOS Y TAMAÑO TOTAL
+                        piezasExtraidas.forEach(p => {
+                            if(p.imagenLista) ctxFinal.drawImage(p.imagenLista, p.nuevoX, p.nuevoY);
+
+                            if(p.offsetNode) p.offsetNode.textContent = reducirStr(p.offsetNode.textContent);
+                            if(p.sizeNode) p.sizeNode.textContent = reducirStr(p.sizeNode.textContent);
+                            if(p.sourceSizeNode) p.sourceSizeNode.textContent = reducirStr(p.sourceSizeNode.textContent);
+                            if(p.sourceColorRectNode) p.sourceColorRectNode.textContent = reducirStr(p.sourceColorRectNode.textContent);
+
+                            let wLogicoNuevo = p.wLogico / 2;
+                            let hLogicoNuevo = p.hLogico / 2;
+                            wLogicoNuevo = Number.isInteger(wLogicoNuevo) ? wLogicoNuevo : parseFloat(wLogicoNuevo.toFixed(2));
+                            hLogicoNuevo = Number.isInteger(hLogicoNuevo) ? hLogicoNuevo : parseFloat(hLogicoNuevo.toFixed(2));
+                            let nx = Number.isInteger(p.nuevoX) ? p.nuevoX : parseFloat(p.nuevoX.toFixed(2));
+                            let ny = Number.isInteger(p.nuevoY) ? p.nuevoY : parseFloat(p.nuevoY.toFixed(2));
+
+                            if(p.rectNode) p.rectNode.textContent = `{{${nx},${ny}},{${wLogicoNuevo},${hLogicoNuevo}}}`;
+                        });
+
+                        // Renombrar el archivo por dentro para que el juego no lo estire
                         if(metadataDict) {
-                            setDictNodeText(metadataDict, "size", `{${anchoHojaFinal},${altoHojaFinal}}`);
-                            
-                            let fName1Node = getDictNode(metadataDict, "realTextureFileName");
-                            if (fName1Node) fName1Node.textContent = fName1Node.textContent.replace(/-uhd\.png/gi, '-hd.png').replace(/-uhd\.pvr/gi, '-hd.pvr').replace(/-hd\.png/gi, '.png').replace(/-hd\.pvr/gi, '.pvr');
-                            
-                            let fName2Node = getDictNode(metadataDict, "textureFileName");
-                            if (fName2Node) fName2Node.textContent = fName2Node.textContent.replace(/-uhd\.png/gi, '-hd.png').replace(/-uhd\.pvr/gi, '-hd.pvr').replace(/-hd\.png/gi, '.png').replace(/-hd\.pvr/gi, '.pvr');
+                            for(let i = 0; i < metadataDict.children.length; i += 2) {
+                                let mKey = metadataDict.children[i].textContent;
+                                let mVal = metadataDict.children[i+1];
+                                if(mKey === "size") mVal.textContent = `{${anchoHojaFinal},${altoHojaFinal}}`;
+                                else if (mKey === "realTextureFileName" || mKey === "textureFileName") {
+                                    let fName = mVal.textContent;
+                                    if(fName.toLowerCase().includes('-uhd')) {
+                                        mVal.textContent = fName.replace(/-uhd\.png/gi, '-hd.png').replace(/-uhd\.pvr/gi, '-hd.pvr');
+                                    } else if(fName.toLowerCase().includes('-hd')) {
+                                        mVal.textContent = fName.replace(/-hd\.png/gi, '.png').replace(/-hd\.pvr/gi, '.pvr');
+                                    }
+                                }
+                            }
                         }
 
                         let plistTextoFinal = new XMLSerializer().serializeToString(xmlDoc);
@@ -350,28 +347,21 @@
             errorLog.innerHTML = "";
             const finalZip = new JSZip();
             let archivosBase = [];
-            let basuraEliminada = 0;
 
             for (let archivo of files) {
                 if (archivo.name.toLowerCase().endsWith('.zip')) {
-                    statusText.innerHTML = `📦 Analizando ZIP...`;
+                    statusText.innerHTML = `📦 Extrayendo ${archivo.name}...`;
                     await pausaUI();
                     try {
                         const zipCargado = await JSZip.loadAsync(archivo);
                         for (let ruta in zipCargado.files) {
-                            if (ruta.includes('__MACOSX') || ruta.split('/').pop().startsWith('._')) {
-                                basuraEliminada++; 
-                            } else if (!zipCargado.files[ruta].dir) {
+                            if (!zipCargado.files[ruta].dir) {
                                 archivosBase.push({ nombre: ruta, data: zipCargado.files[ruta], esZip: true });
                             }
                         }
-                    } catch(e) { errorLog.innerHTML += `❌ Error leyendo ZIP<br>`; }
+                    } catch(e) { errorLog.innerHTML += `❌ Error en ZIP: ${archivo.name}<br>`; }
                 } else {
-                    if (archivo.name.includes('__MACOSX') || archivo.name.startsWith('._')) {
-                        basuraEliminada++;
-                    } else {
-                        archivosBase.push({ nombre: archivo.name, data: archivo, esZip: false });
-                    }
+                    archivosBase.push({ nombre: archivo.name, data: archivo, esZip: false });
                 }
             }
 
@@ -388,16 +378,12 @@
             let total = Object.keys(grupos).filter(k => grupos[k].png && grupos[k].plist).length;
             let actual = 1;
 
-            if (basuraEliminada > 0) {
-                errorLog.innerHTML = `<span style="color:#32d74b;">✅ Se ignoraron ${basuraEliminada} archivos de basura.</span><br>`;
-            }
-
             for (let llave in grupos) {
                 let grupo = grupos[llave];
                 if (!grupo.png || !grupo.plist) continue;
 
                 statusText.innerHTML = `⚙️ Procesando ${actual} de ${total}...`;
-                progressDetail.innerHTML = llave.split('/').pop();
+                progressDetail.innerHTML = "Cortando y encogiendo piezas una por una...";
                 await pausaUI();
 
                 try {
@@ -406,6 +392,7 @@
                     
                     const resultado = await procesarIconoGDColon(imagenBlobBruto, textoPlistBruto);
                     
+                    // Renombrado inteligente (El Fix de las piezas voladoras)
                     let nombreFinal = grupo.png.nombre;
                     if(nombreFinal.toLowerCase().includes('-uhd')) {
                         nombreFinal = nombreFinal.replace(/-uhd/gi, '-hd');
@@ -435,9 +422,9 @@
             const zipBlob = await finalZip.generateAsync({type:"blob", compression: "DEFLATE", compressionOptions: { level: 6 }});
             const urlDescarga = URL.createObjectURL(zipBlob);
             
-            downloadArea.innerHTML = `<a href="${urlDescarga}" download="Ketsu_V20_Fix_Final.zip" class="btn">↓ Descargar Texturas Finales</a>`;
+            downloadArea.innerHTML = `<a href="${urlDescarga}" download="Ketsu_GDColon_Pro.zip" class="btn">↓ Descargar Texturas Perfectas</a>`;
             statusText.innerHTML = `🎉 ¡${procesados} Iconos Listos!`;
-            progressDetail.innerHTML = "Geometría alineada. Cero errores.";
+            progressDetail.innerHTML = "Geometría arreglada y Cero Líneas.";
         }
     </script>
 </body>
